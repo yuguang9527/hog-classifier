@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hog-training-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: trainer
+        image: gcr.io/YOUR_PROJECT_ID/hog-classifier:latest
+        command: ["python", "solution.py", "--mode", "train", "--feature_type", "hog", "--num_unit", "64"]
+        env:
+        - name: WANDB_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: wandb-secret
+              key: api-key
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+      restartPolicy: Never
+  backoffLimit: 2
