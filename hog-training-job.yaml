@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: trainer
-        image: us-central1-docker.pkg.dev/weight2-459208/hog-repo/hog-classifier:v2
+        image: us-central1-docker.pkg.dev/weight2-459208/hog-repo/hog-classifier:v3
         command: ["python", "solution.py", "--mode", "train", "--feature_type", "hog", "--num_unit", "64"]
         env:
         - name: WANDB_API_KEY
@@ -19,4 +19,4 @@ spec:
           # limits:
             # nvidia.com/gpu: 1
       restartPolicy: Never
-  backoffLimit: 2
+  backoffLimit: 2 

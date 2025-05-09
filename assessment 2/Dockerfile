@@ -10,14 +10,15 @@ FROM python:3.10-slim
 # working directory
 WORKDIR /app
 
-# working directory
-WORKDIR /app
-
-# copy files
-COPY . .
+# copy requirements.txt
+COPY requirements.txt .
 
 # install dependencies
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# copy the rest of the files
+COPY . .
 
 # run the training job  
 CMD ["python", "solution.py"]

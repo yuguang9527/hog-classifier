@@ -1,0 +1,12 @@
+    steps:
+    - name: 'gcr.io/cloud-builders/docker'
+      args:
+      - 'build'
+      - '--platform'
+      - 'linux/amd64'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/weight2-459208/hog-repo/hog-classifier:v3'
+      - '.'  
+      dir: 'assessment 2' 
+    images:
+    - 'us-central1-docker.pkg.dev/weight2-459208/hog-repo/hog-classifier:v3'

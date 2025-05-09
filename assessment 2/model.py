@@ -35,18 +35,34 @@ class MyNetwork(nn.Module):
         # hidden_size = getattr(config, 'hidden_size', 256)  # Default to 256 if not specified
         hidden_size = config.num_unit # Use num_unit from config.
         #num_classes = 10  # CIFAR10 has 10 classes
-        num_classes = config.num_classes # Use num_classes from config.
-        hidden_layers = config.num_layers # Use num_layers from config.
+        num_classes = config.num_class # Use num_class from config.
+        num_hidden_layers = config.num_hidden # Use num_hidden from config.
 
         # Create a simple network with layers matching the saved checkpoint
-        self.linear_0 = nn.Linear(input_size, hidden_size)
-        self.linear_1 = nn.Linear(hidden_size, hidden_size)
-        self.linear_2 = nn.Linear(hidden_size, hidden_size)
-        self.output = nn.Linear(hidden_size, num_classes)
+        # self.linear_0 = nn.Linear(input_size, hidden_size)
+        # self.linear_1 = nn.Linear(hidden_size, hidden_size)
+        #self.linear_2 = nn.Linear(hidden_size, hidden_size)
+        #self.output = nn.Linear(hidden_size, num_classes)
         
         # Activation function
-        self.relu = nn.ReLU()
-    
+        # self.relu = nn.ReLU()
+
+        layers = []
+        # Input layer
+        layers.append(nn.Linear(input_size, hidden_size))
+        layers.append(nn.ReLU() if config.activ_type == 'relu' else nn.Tanh())
+
+        # Hidden layers
+        for _ in range(max(0, num_hidden_layers - 1)): 
+            layers.append(nn.Linear(hidden_size, hidden_size))
+            layers.append(nn.ReLU() if config.activ_type == 'relu' else nn.Tanh())
+
+        # Output layer
+        self.output_layer = nn.Linear(hidden_size, num_classes) # define the output layer
+ 
+        self.hidden_module = nn.Sequential(*layers) # combine input and hidden layers
+            
+
     def forward(self, x):
         """
         Forward pass through the network.
@@ -85,7 +101,8 @@ class MyNetwork(nn.Module):
         # x = self.relu(self.linear_2(x))
         # x = self.output(x)
         
-        x = self.hidden_layers(x) # pass through the hidden layers
+        # x = self.hidden_layers(x) # pass through the hidden layers
+        x = self.hidden_module(x) # pass through the hidden module
         x = self.output_layer(x) # pass through the output layer
         return x
 

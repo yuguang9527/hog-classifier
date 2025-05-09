@@ -1,0 +1,28 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+ENV.bak/
+venv.bak/
+
+.DS_Store
+.coverage
+.pytest_cache/
+.hypothesis/
+
+# IDE specific
+.vscode/
+.idea/
+*.swp
+*~
+
+assessment 2/data/
+assessment 2/exp_results/
+assessment 2/logs/
+assessment 2/save/
+assessment 2/__pycache__/
+assessment 2/.DS_Store

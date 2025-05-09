@@ -19,6 +19,7 @@ from utils.datawrapper import CIFAR10Dataset
 from utils.features import extract_h_histogram, extract_hog
 from utils.preprocess import normalize
 from torchvision import datasets
+from wandb_utils import init_wandb, log_test_metrics, save_model_artifact, finish_wandb
 
 def data_criterion(config):
     """Returns the loss object based on the commandline argument for the data term
@@ -147,7 +148,7 @@ def train(config):
             # to code the saving part first and then code this part.
             print("Checkpoint found! Resuming")
             # Read checkpoint file.
-            load_res = torch.load(checkpoint_file)
+            load_res = torch.load(checkpoint_file, weights_only=False) # Load the checkpoint file and the load the things that are required to continue training.
             # Resume iterations
             iter_idx = load_res["iter_idx"]
             # Resume best va result
@@ -295,6 +296,7 @@ def train(config):
                         "model": model.state_dict(),
                         "optimizer": optimizer.state_dict(),
                     }, bestmodel_file)
+                    save_model_artifact(bestmodel_file) # Save the best model to W&B.   
 
 
 def test(config):
@@ -384,10 +386,13 @@ def test(config):
     # Report Test loss and accuracy
     print("Test Loss = {}".format(np.mean(te_loss)))
     print("Test Accuracy = {}%".format(np.mean(te_acc)))
+    log_test_metrics(np.mean(te_loss), np.mean(te_acc))
 
 
 def main(config):
     """The main function."""
+
+    init_wandb(config, config.mode)
 
     if config.mode == "train":
         train(config)
@@ -395,6 +400,8 @@ def main(config):
         test(config)
     else:
         raise ValueError("Unknown run mode \"{}\"".format(config.mode))
+    
+    finish_wandb()
 
 
 if __name__ == "__main__":

@@ -1,14 +1,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: hog-training-job
+  name: hog-job-u128-lr0001
 spec:
   template:
     spec:
       containers:
       - name: trainer
-        image: us-central1-docker.pkg.dev/weight2-459208/hog-repo/hog-classifier:v2
-        command: ["python", "solution.py", "--mode", "train", "--feature_type", "hog", "--num_unit", "64"]
+        image: us-central1-docker.pkg.dev/weight2-459208/hog-repo/hog-classifier:v3
+        command: ["python", "solution.py", "--mode", "train", "--feature_type", "hog", "--num_unit", "128", "--learning_rate", "0.001"]
         env:
         - name: WANDB_API_KEY
           valueFrom:
@@ -19,4 +19,4 @@ spec:
           # limits:
             # nvidia.com/gpu: 1
       restartPolicy: Never
-  backoffLimit: 2
+  backoffLimit: 2 

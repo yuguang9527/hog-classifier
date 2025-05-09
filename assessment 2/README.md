@@ -1,27 +1,45 @@
-# Tier2 Take Home Test: PyTorch Classifier
+1. Experiment Results
 
-There's no trick question; this take home test is for evaluating your technical abilities.
+| Architecture (hidden units) | Learning Rate | Train Accuracy | Validation Accuracy |
+|-----------------------------|---------------|----------------|---------------------|
+| 64                          | 0.0001        | 67 %           | 57.66 %             |
+| 64                          | 0.001         | 84 %           | 53.46 %             |
+| 128                         | 0.0001        | 95 %           | 54.04 %             |
+| 128                         | 0.01          | 63 %           | 55.59 %             |
 
-1. Finish implementing `solution.py` (test routine):
-  * If implemented correctly, the following test accuracy should be achieved with the provided weights:
-	  * Configuration: Histogram of Oriented Gradients (HOG) — Test accuracy: `56.59%`
-  * Run `python solution.py --mode test --feature_type hog --num_unit 64` to test your solution.
-   	- You can run `python solution.py --help` to see all available arguments.
-2. Train the model with two different learning rates on at least two different architectures (e.g. different numbers of neurons & layers). In total, report a minimum of four train/test results.
-3. Complete dockerfile to run `python solution.py --mode train --feature_type hog --num_unit 64` and run this both locally and remotely in the tooling of your choice. 
-4. Write at least one paragraph discussing your findings and provide instructions on how to pull and run your Docker image from [Docker Hub](https://hub.docker.com/)
+Analysis  
+The best validation accuracy was achieved by the smallest model with the slowest learning rate (64 units, 0.0001), likely because its limited capacity and conservative updates prevented overfitting, while larger or faster-learning models either memorized the training data or became unstable during training.
 
+---
 
-**Environment setup**: `requirements.txt` file is recommended to be used with pip to setup your environment.
+2. Running the Docker Image
+
+The image is published on Docker Hub.
+
 ```bash
-pip install -r requirements.txt
+# 1) Pull the image
+docker pull ke5102su/hog-classifier:v3
+
+# 2) Reproduce the baseline test (~56.6 % accuracy expected)
+docker run --rm ke5102su/hog-classifier:v3 \
+  python solution.py --mode test --feature_type hog --num_unit 64
+
+# 3) Example: launch a custom training run
+docker run --rm ke5102su/hog-classifier:v3 \
+  python solution.py --mode train --feature_type hog --num_unit 128 --lr 0.001
 ```
-We recommend using a virtual environment manager, like `conda` or `venv` - we recommend [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv)
 
+---
 
-## Submission instructions
+3. Training Curves (Weights & Biases)
 
-Please submit 
-1. The executable version of the codebase (with relevant comments).
-2. Instructions on how to run the Docker image locally and the steps you used to run training remotely using the same Docker image and the tooling of your choice
-3. A written summary as specified in point 4 above.
+Public W&B links for full metrics and curves:
+
+| Configuration | W&B Run |
+|---------------|---------|
+| 128 units, LR 0.0001 | https://wandb.ai/yuguangsong-stanford-university/hog-training-job/runs/qt3h595z |
+| 128 units, LR 0.01   | https://wandb.ai/yuguangsong-stanford-university/hog-training-job/runs/bazgemf8 |
+| 64 units,  LR 0.001  | https://wandb.ai/yuguangsong-stanford-university/hog-training-job/runs/guzv7k6w |
+| 64 units,  LR 0.0001 | https://wandb.ai/yuguangsong-stanford-university/hog-training-job/runs/gbekzhv1 |
+
+Click any run to inspect accuracy/loss curves and download the saved best model weights.
