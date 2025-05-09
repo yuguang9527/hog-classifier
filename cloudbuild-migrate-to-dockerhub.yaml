@@ -1,0 +1,28 @@
+steps:
+  # Pull the image from Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['pull', 'us-central1-docker.pkg.dev/weight2-459208/hog-repo/hog-classifier:v3']
+
+  # Tag the image for Docker Hub
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['tag', 'us-central1-docker.pkg.dev/weight2-459208/hog-repo/hog-classifier:v3', 'ke5102su/hog-classifier:v3']
+
+  # Login to Docker Hub using credentials from Secret Manager
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - 'docker login --username=$$USERNAME --password=$$PASSWORD'
+    secretEnv: ['USERNAME', 'PASSWORD']
+
+  # Push the image to Docker Hub
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'ke5102su/hog-classifier:v3']
+
+# This section is for specifying secrets from Secret Manager
+availableSecrets:
+  secretManager:
+  - versionName: projects/weight2-459208/secrets/DOCKERHUB_USERNAME/versions/latest
+    env: 'USERNAME'
+  - versionName: projects/weight2-459208/secrets/DOCKERHUB_PASSWORD/versions/latest
+    env: 'PASSWORD' 
